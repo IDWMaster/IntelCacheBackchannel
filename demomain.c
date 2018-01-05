@@ -34,8 +34,8 @@ static int demo_mmap (struct file * fd, struct vm_area_struct * vma) {
 const char secret[] = "TOP SECRET\nMIDDLE SECRET\nBOTTOM SECRET";
 static long demo_ioctl (struct file * fd, unsigned int opcode, unsigned long arg) {
   
-
-copy_to_user((void*)arg,(char*)secret,sizeof(void*));
+const char* addr = secret;
+copy_to_user((void*)arg,&addr,sizeof(void*));
 return 0;
 }
 
